@@ -1,0 +1,1113 @@
+{
+	"info": {
+		"_postman_id": "a8213623-de57-432a-895c-c7313449b08a",
+		"name": "Movie Backend - Postman Collection",
+		"description": "Collection for the Movie Backend (JWT auth + Movies CRUD)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23413836",
+		"_collection_link": "https://crimson-desert-983741-8267.postman.co/workspace/Personal-Projects~a8ec367c-f31a-45d3-9302-356123ca86f9/collection/23413836-a8213623-de57-432a-895c-c7313449b08a?action=share&source=collection_link&creator=23413836"
+	},
+	"item": [
+		{
+			"name": "Auth - Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"if (res && res.data && res.data.access_token) {",
+							"  pm.collectionVariables.set('token', res.data.access_token);",
+							"  console.log('token saved to collection variable');",
+							"} else {",
+							"  pm.test('access_token exists', function() { pm.expect(false).to.be.true });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Auth - Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "228"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"e4-AWMam+UfHZwof2ZP6b0xizzeRHQ\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 06:50:47 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Logged in\",\n    \"data\": {\n        \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzI3NTg0NywiZXhwIjoxNzYzMjc5NDQ3fQ.2WAarhVbN3ep09afOk8WwTOsd7rlHuLzO6UMmVXrC_w\"\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Movies - List (public)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies?title=matrix&sort=createdAt:desc&page=1&limit=10&raw=",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "1999",
+							"disabled": true
+						},
+						{
+							"key": "title",
+							"value": "matrix"
+						},
+						{
+							"key": "publishingYear",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "publishingYear_min",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "publishingYear_max",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "createdAfter",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "createdBefore",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "createdAt:desc"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "raw",
+							"value": ""
+						}
+					]
+				},
+				"description": "List movies with optional filters. Query parameters:\n- q: quick search (title or year)\n- title: partial title match\n- publishingYear: exact year or range (e.g. 1990-2000)\n- publishingYear_min / publishingYear_max: numeric range\n- createdAfter / createdBefore: ISO dates\n- sort: comma separated field:dir pairs (e.g. title:asc,createdAt:desc)\n- page / limit: pagination\n- raw: URL-encoded JSON to merge into Mongo filter (advanced)"
+			},
+			"response": [
+				{
+					"name": "search",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movies?search=Matrix&sort=createdAt:desc&page=1&limit=10&raw=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Matrix"
+								},
+								{
+									"key": "title",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_min",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_max",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdAfter",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdBefore",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "createdAt:desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "raw",
+									"value": ""
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "294"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"126-HFZj/5hQvK+HGxjYTAmh222Gb0A\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 06:54:19 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movies retrieved\",\n    \"data\": {\n        \"items\": [\n            {\n                \"_id\": \"69197291524f2299536bccdf\",\n                \"title\": \"The Matrix\",\n                \"publishingYear\": 1999,\n                \"poster\": \"/uploads/1763275409896-53334d56-0503-4ff2-89c3-96c3df16f6ae.png\",\n                \"createdAt\": \"2025-11-16T06:43:29.918Z\",\n                \"__v\": 0\n            }\n        ],\n        \"total\": 1,\n        \"page\": 1,\n        \"limit\": 10\n    }\n}"
+				},
+				{
+					"name": "search with other feild",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movies?search=1999&sort=createdAt:desc&page=1&limit=10&raw=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "1999"
+								},
+								{
+									"key": "title",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_min",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_max",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdAfter",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdBefore",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "createdAt:desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "raw",
+									"value": ""
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "294"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"126-HFZj/5hQvK+HGxjYTAmh222Gb0A\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:02:36 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movies retrieved\",\n    \"data\": {\n        \"items\": [\n            {\n                \"_id\": \"69197291524f2299536bccdf\",\n                \"title\": \"The Matrix\",\n                \"publishingYear\": 1999,\n                \"poster\": \"/uploads/1763275409896-53334d56-0503-4ff2-89c3-96c3df16f6ae.png\",\n                \"createdAt\": \"2025-11-16T06:43:29.918Z\",\n                \"__v\": 0\n            }\n        ],\n        \"total\": 1,\n        \"page\": 1,\n        \"limit\": 10\n    }\n}"
+				},
+				{
+					"name": "title search",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movies?title=matrix&sort=createdAt:desc&page=1&limit=10&raw=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "1999",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "matrix"
+								},
+								{
+									"key": "publishingYear",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_min",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_max",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdAfter",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdBefore",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "createdAt:desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "raw",
+									"value": ""
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "294"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"126-HFZj/5hQvK+HGxjYTAmh222Gb0A\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:03:50 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movies retrieved\",\n    \"data\": {\n        \"items\": [\n            {\n                \"_id\": \"69197291524f2299536bccdf\",\n                \"title\": \"The Matrix\",\n                \"publishingYear\": 1999,\n                \"poster\": \"/uploads/1763275409896-53334d56-0503-4ff2-89c3-96c3df16f6ae.png\",\n                \"createdAt\": \"2025-11-16T06:43:29.918Z\",\n                \"__v\": 0\n            }\n        ],\n        \"total\": 1,\n        \"page\": 1,\n        \"limit\": 10\n    }\n}"
+				},
+				{
+					"name": "publishingYear",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movies?publishingYear=1999&sort=createdAt:desc&page=1&limit=10&raw=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "1999",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "matrix",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear",
+									"value": "1999"
+								},
+								{
+									"key": "publishingYear_min",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "publishingYear_max",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdAfter",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "createdBefore",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "createdAt:desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "raw",
+									"value": ""
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "294"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"126-HFZj/5hQvK+HGxjYTAmh222Gb0A\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:05:11 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movies retrieved\",\n    \"data\": {\n        \"items\": [\n            {\n                \"_id\": \"69197291524f2299536bccdf\",\n                \"title\": \"The Matrix\",\n                \"publishingYear\": 1999,\n                \"poster\": \"/uploads/1763275409896-53334d56-0503-4ff2-89c3-96c3df16f6ae.png\",\n                \"createdAt\": \"2025-11-16T06:43:29.918Z\",\n                \"__v\": 0\n            }\n        ],\n        \"total\": 1,\n        \"page\": 1,\n        \"limit\": 10\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Movies - Create (protected, multipart)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"if (res && res.data && res.data._id) {",
+							"  pm.collectionVariables.set('exampleMovieId', res.data._id);",
+							"  console.log('exampleMovieId saved to collection variable');",
+							"} else {",
+							"  pm.test('movie id exists', function() { pm.expect(false).to.be.true });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "The Matrix",
+							"type": "text"
+						},
+						{
+							"key": "publishingYear",
+							"value": "1999",
+							"type": "text"
+						},
+						{
+							"key": "poster",
+							"type": "file",
+							"src": "./uploads/sample-poster.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/movies",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Movies - Create (protected, multipart)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "The Hulk",
+									"type": "text"
+								},
+								{
+									"key": "publishingYear",
+									"value": "1998",
+									"type": "text"
+								},
+								{
+									"key": "poster",
+									"type": "file",
+									"src": "/C:/Users/VAIBHAV/Pictures/imge.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movies",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "247"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"f7-0xFvWQDKlRP9SqxyyEn+hWgIyxs\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:06:38 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movie created\",\n    \"data\": {\n        \"title\": \"The Hulk\",\n        \"publishingYear\": 1998,\n        \"poster\": \"/uploads/1763276798286-7e7954de-d601-4fdf-bdaf-60336b1a049d.png\",\n        \"_id\": \"691977fe7c09c808d62f3fd9\",\n        \"createdAt\": \"2025-11-16T07:06:38.308Z\",\n        \"__v\": 0\n    }\n}"
+				},
+				{
+					"name": "validation error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "The Hulk 2",
+									"type": "text"
+								},
+								{
+									"key": "publishingYear",
+									"value": "1800",
+									"type": "text"
+								},
+								{
+									"key": "poster",
+									"type": "file",
+									"src": "/C:/Users/VAIBHAV/Pictures/imge.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movies",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "116"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"74-OsqPzNNOuuWQqGcBP1dVrLFb6dE\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:30:43 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": [\n        \"Publishing year must be a number between 1900 and 2025.\"\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Movies - Get by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"{{exampleMovieId}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Movies - Get by ID",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies",
+								"{{exampleMovieId}}"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "245"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"f5-XXjnHGsVAQ22MRu9XTvdmjVXAfU\""
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 16 Nov 2025 07:08:00 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Movie found\",\n    \"data\": {\n        \"_id\": \"691977fe7c09c808d62f3fd9\",\n        \"title\": \"The Hulk\",\n        \"publishingYear\": 1998,\n        \"poster\": \"/uploads/1763276798286-7e7954de-d601-4fdf-bdaf-60336b1a049d.png\",\n        \"createdAt\": \"2025-11-16T07:06:38.308Z\",\n        \"__v\": 0\n    }\n}"
+				}
+			]
+		},
+				{
+					"name": "Movies - Update (protected, multipart)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "The Matrix - Remastered",
+									"type": "text"
+								},
+								{
+									"key": "publishingYear",
+									"value": "1999",
+									"type": "text"
+								},
+								{
+									"key": "poster",
+									"type": "file",
+									"src": "./uploads/sample-poster-updated.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies",
+								"{{exampleMovieId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Movies - Update (protected, multipart)",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "The Matrix - Remastered",
+											"type": "text"
+										},
+										{
+											"key": "publishingYear",
+											"value": "1989",
+											"type": "text"
+										},
+										{
+											"key": "poster",
+											"type": "file",
+											"src": [
+												"./uploads/sample-poster-updated.jpg",
+												"/C:/Users/VAIBHAV/Pictures/imge.png"
+											]
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"movies",
+										"{{exampleMovieId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "262"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"106-9FXGHEV3OPCGN0qXewLc+4htk3c\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 07:08:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Movie updated\",\n    \"data\": {\n        \"_id\": \"691977fe7c09c808d62f3fd9\",\n        \"title\": \"The Matrix - Remastered\",\n        \"publishingYear\": 1989,\n        \"poster\": \"/uploads/1763276927940-c74d3eda-df97-47e4-a7af-370acfea8330.png\",\n        \"createdAt\": \"2025-11-16T07:06:38.308Z\",\n        \"__v\": 0\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Movies - Delete (protected)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movies",
+								"{{exampleMovieId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Movies - Delete (protected)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/movies/{{exampleMovieId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"movies",
+										"{{exampleMovieId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "247"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"f7-S2mnSkKlU8HnhOBFmQNAyQKHQtU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 07:16:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Movie deleted\",\n    \"data\": {\n        \"_id\": \"69197a439516beca46b800ab\",\n        \"title\": \"The Hulk\",\n        \"publishingYear\": 1998,\n        \"poster\": \"/uploads/1763277379954-c94195a9-98ce-43a5-956d-9bd684e1a32a.png\",\n        \"createdAt\": \"2025-11-16T07:16:19.981Z\",\n        \"__v\": 0\n    }\n}"
+						}
+					]
+				}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "exampleMovieId",
+			"value": ""
+		}
+	]
+}

@@ -1,0 +1,260 @@
+openapi: 3.0.0
+info:
+  title: Movie API
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      summary: Login and get JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    message: Logged in
+                    data:
+                      access_token: eyJ...REDACTED
+  /movies:
+    get:
+      summary: List movies with pagination and filters
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Quick search (title or publishing year)
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Partial title match (case-insensitive)
+        - in: query
+          name: publishingYear
+          schema:
+            type: string
+          description: Exact year or range (e.g. 1990-2000)
+        - in: query
+          name: publishingYear_min
+          schema:
+            type: integer
+        - in: query
+          name: publishingYear_max
+          schema:
+            type: integer
+        - in: query
+          name: createdAfter
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: createdBefore
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Comma-separated field:dir pairs, e.g. createdAt:desc,title:asc
+        - in: query
+          name: page
+          schema:
+            type: integer
+          default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          default: 10
+      responses:
+        '200':
+          description: List of movies (paginated)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMovies'
+              examples:
+                sample:
+                  value:
+                    success: true
+                    message: Movies retrieved
+                    data:
+                      items:
+                        - _id: 69197291524f2299536bccdf
+                          title: The Matrix
+                          publishingYear: 1999
+                          poster: /uploads/sample.png
+                          createdAt: '2025-11-16T06:43:29.918Z'
+                      total: 1
+                      page: 1
+                      limit: 10
+    post:
+      summary: Create movie (multipart/form-data)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                publishingYear:
+                  type: integer
+                poster:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Movie created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+              examples:
+                created:
+                  value:
+                    success: true
+                    message: Movie created
+                    data:
+                      _id: 691977fe7c09c808d62f3fd9
+                      title: The Hulk
+                      publishingYear: 1998
+                      poster: /uploads/1763276798286-...png
+                      createdAt: '2025-11-16T07:06:38.308Z'
+  /movies/{id}:
+    get:
+      summary: Get movie by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movie found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Not found
+    put:
+      summary: Update movie (multipart/form-data)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                publishingYear:
+                  type: integer
+                poster:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Movie updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete movie
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Movie deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Movie:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        publishingYear:
+          type: integer
+        poster:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    PaginatedMovies:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movie'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            access_token:
+              type: string
